@@ -1,0 +1,26 @@
+---
+title: "Appendix"
+author: "Frances Lin"
+date: "2/25/2021"
+output: pdf_document
+---
+
+# Appendix 
+
+**csv**
+
+**R/Python**
+
+**BigQuery**
+
+**Spark** 
+
+
+
+
+\newpage
+
+![For-Hire Vehicle Trip Records 2019-01](/Users/franceslinyc/Big-Data-Analysis-of-NYC-Trip-data-2021/sample_data_fhv_2019.png)
+
+
+
