@@ -1,0 +1,3 @@
+1. Move everything to the main folder 
+2. Run Lin_CS512_Final_Project.Rmd to generate report
+3. Run Lin_Plotting.Rmd to join datasets and plot

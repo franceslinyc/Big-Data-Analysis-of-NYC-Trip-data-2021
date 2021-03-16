@@ -1,0 +1,40 @@
+21/03/14 03:10:05 INFO org.sparkproject.jetty.util.log: Logging initialized @4957ms to org.sparkproject.jetty.util.log.Slf4jLog
+21/03/14 03:10:06 INFO org.sparkproject.jetty.server.Server: jetty-9.4.36.v20210114; built: 2021-01-14T16:44:28.689Z; git: 238ec6997c7806b055319a6d11f8ae7564adc0de; jvm 1.8.0_282-b08
+21/03/14 03:10:06 INFO org.sparkproject.jetty.server.Server: Started @5091ms
+21/03/14 03:10:06 INFO org.sparkproject.jetty.server.AbstractConnector: Started ServerConnector@4eed6343{HTTP/1.1, (http/1.1)}{0.0.0.0:38829}
+21/03/14 03:10:06 INFO org.apache.hadoop.yarn.client.RMProxy: Connecting to ResourceManager at cluster-bc01-m/10.138.0.5:8032
+21/03/14 03:10:07 INFO org.apache.hadoop.yarn.client.AHSProxy: Connecting to Application History server at cluster-bc01-m/10.138.0.5:10200
+21/03/14 03:10:07 INFO org.apache.hadoop.conf.Configuration: resource-types.xml not found
+21/03/14 03:10:07 INFO org.apache.hadoop.yarn.util.resource.ResourceUtils: Unable to find 'resource-types.xml'.
+21/03/14 03:10:09 INFO org.apache.hadoop.yarn.client.api.impl.YarnClientImpl: Submitted application application_1615691361088_0001
+21/03/14 03:10:10 INFO org.apache.hadoop.yarn.client.RMProxy: Connecting to ResourceManager at cluster-bc01-m/10.138.0.5:8030
+21/03/14 03:10:13 INFO com.google.cloud.hadoop.io.bigquery.BigQueryFactory: BigQuery connector version hadoop2-1.2.0
+21/03/14 03:10:13 INFO com.google.cloud.hadoop.io.bigquery.BigQueryFactory: Creating BigQuery from default credential.
+21/03/14 03:10:13 INFO com.google.cloud.hadoop.io.bigquery.BigQueryFactory: Creating BigQuery from given credential.
+21/03/14 03:10:13 INFO com.google.cloud.hadoop.io.bigquery.BigQueryConfiguration: Using working path: 'gs://dataproc-staging-us-west1-283579064512-mj5qi01m/hadoop/tmp/bigquerry/pyspark_input'
+21/03/14 03:12:31 INFO com.google.cloud.hadoop.io.bigquery.UnshardedExportToCloudStorage: Setting FileInputFormat's inputPath to 'gs://dataproc-staging-us-west1-283579064512-mj5qi01m/hadoop/tmp/bigquerry/pyspark_input'
+21/03/14 03:12:32 INFO org.apache.hadoop.mapreduce.lib.input.FileInputFormat: Total input files to process : 6
++-------+------------------+
+|summary|     trip_distance|
++-------+------------------+
+|  count|          24231126|
+|   mean|3.5814057339315424|
+| stddev| 327.8228554760617|
+|    min|              0.01|
+|    max|         350914.88|
++-------+------------------+
+
++-------+------------------+
+|summary|      total_amount|
++-------+------------------+
+|  count|          24231126|
+|   mean|18.342393123230288|
+| stddev|249.58870028047656|
+|    min|               0.3|
+|    max|          998325.6|
++-------+------------------+
+
+21/03/14 03:18:02 INFO com.google.cloud.hadoop.repackaged.gcs.com.google.cloud.hadoop.gcsio.GoogleCloudStorageFileSystem: Successfully repaired 'gs://dataproc-staging-us-west1-283579064512-mj5qi01m/hadoop/tmp/bigquerry/' directory.
+21/03/14 03:18:02 INFO org.sparkproject.jetty.server.AbstractConnector: Stopped Spark@4eed6343{HTTP/1.1, (http/1.1)}{0.0.0.0:0}
+Job output is complete
+Equivalent: 
