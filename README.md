@@ -18,9 +18,9 @@ Lin_Plotting contains codes that join datasets and produce plots
 
 Instruction: 
 
-A major portion of this project was done using **Google Cloud** servies (e.g. **Storage**, **Dataprep**, **BigQuery**, **Dataprep** for **PySpark**) so the results are less likely reproducible. However, for reporting and plotting 
+A major portion of this project was done using **Google Cloud** services (e.g. **Storage**, **Dataprep**, **BigQuery**, **Dataprep** for **PySpark**) so the results are less likely reproducible. However, for reporting and plotting 
 
-1. Move everything to the main folder 
+1. Move every file to the main folder 
 2. Run Lin_CS512_Final_Project.Rmd to generate report
 3. Run Lin_Plotting.Rmd to join datasets and produce plots
 
