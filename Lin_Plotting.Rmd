@@ -1,0 +1,158 @@
+---
+title: "Lin_Plotting"
+author: "Frances Lin"
+date: "3/10/2021"
+output: pdf_document
+---
+
+```{r}
+# Load packages
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+# Read data for Q1 avg fare amount
+yellow_20 <- read.csv("2020_yellow_mon_amount.csv")
+yellow_19 <- read.csv("2019_yellow_mon_amount.csv")
+green_20 <- read.csv("2020_green_mon_amount.csv")
+green_19 <- read.csv("2019_green_mon_amount.csv")
+
+# Read data for Q2 total count of license
+hfhv_20 <- read.csv("2020_hfhv_license.csv")
+hfhv_19 <- read.csv("2019_hfhv_license.csv")
+
+# Read data for Q3 top 6 drop-off location
+yellow_20_DO <- read.csv("2020_yellow_DOLocation.csv")
+yellow_19_DO <- read.csv("2019_yellow_DOLocation.csv")
+green_20_DO <- read.csv("2020_green_DOLocation.csv")
+green_19_DO <- read.csv("2019_green_DOLocation.csv")
+fhv_20_DO <- read.csv("2020_fhv_DOLocation.csv")
+fhv_19_DO <- read.csv("2019_fhv_DOLocation.csv")
+hfhv_20_DO <- read.csv("2020_hfhv_DOLocation.csv")
+hfhv_19_DO <- read.csv("2019_hfhv_DOLocation.csv")
+```
+
+```{r}
+# View data for Q1
+head(yellow_20)
+
+# View data for Q2
+head(hfhv_20) 
+
+# View data for Q3
+head(yellow_20_DO)
+```
+
+```{r}
+# Create a dataframe for Q1
+df <- tibble(
+  pickup_mon = rep(yellow_20$pickup_mon, 4), 
+  mon_amount = c(yellow_20$mon_amount, yellow_19$mon_amount, green_20$mon_amount, green_19$mon_amount),
+  year = c(rep(2020, 12), rep(2019, 12), rep(2020, 12), rep(2019,12)), 
+  type = c(rep("yellow", 12), rep("yellow", 12), rep("green", 12), rep("green",12))
+  )
+head(df)
+```
+
+```{r}
+# Juno is no longer there in 2020
+# Add to dataframe for plotting purposes
+hfhv_20 <- hfhv_20 %>% add_row(license = "Juno", count_license = 0)
+hfhv_20
+```
+
+```{r}
+# Create a dataframe for Q2
+df_license <- tibble(
+  license = rep(hfhv_20$license, 2), 
+  count_license = c(hfhv_20$count_license, hfhv_19$count_license), 
+  year = c(rep("2020", 4), rep("2019", 4))
+)
+head(df_license) 
+```
+
+```{r}
+# Plot data for Q1
+p <- ggplot(df, aes(x=pickup_mon, y=mon_amount, color = factor(year))) + geom_point() + geom_smooth()
+p + facet_wrap(~factor(type, levels = c("yellow", "green")), ncol = 2) + 
+  ggtitle("Monthly Avg Fare Amount by Taxi Type")
+```
+
+```{r}
+# Plot data for Q1
+p <- ggplot(df, aes(x=pickup_mon, y=mon_amount, color = factor(type))) + geom_point() + geom_smooth()
+p + facet_wrap(~factor(year), ncol = 2) + 
+  ggtitle("Monthly Avg Fare Amount by Year")
+```
+
+```{r}
+# Plot data for Q2
+p_license <- ggplot(df_license, aes(x=factor(license, levels = c("Uber", "Lyft", "Via", "Juno")), y=count_license, fill=license)) + 
+  geom_bar(stat = "identity") + 
+  xlab("license")
+p_license + facet_wrap(~factor(year), ncol = 2) + 
+  ggtitle("Yearly Count of License by Year")
+```
+
+```{r}
+# Join dataframes by year for Q3
+df_location_20 <- rbind(yellow_20_DO, green_20_DO, fhv_20_DO, hfhv_20_DO)
+df_location_20 <- df_location_20 %>% add_column(
+  type = c(rep("yellow", 6), rep("green", 6), rep("fhv", 6), rep("hfhv", 6)), 
+  year = c(rep(2020, length(df_location_20$DOLocationID)))
+)
+df_location_19 <- rbind(yellow_19_DO, green_19_DO, fhv_19_DO, hfhv_19_DO)
+df_location_19 <- df_location_19 %>% add_column(
+  type = c(rep("yellow", 6), rep("green", 6), rep("fhv", 6), rep("hfhv", 6)), 
+  year = c(rep(2019, length(df_location_19$DOLocationID)))
+) 
+
+# Join all dataframes 
+df_location <- rbind(df_location_20, df_location_19)
+head(df_location)
+```
+
+```{r}
+# Read data for Q3
+zone <- read.csv("zone_lookup.csv")
+#rename().. doesnt work for some reasons
+names(zone)[names(zone) == "LocationID"] <- "DOLocationID" #rename col name 
+zone <- as.tibble(zone)
+head(zone)
+```
+
+```{r}
+# Join dataframes using "DOLocationID" as key
+df_join <- full_join(df_location, zone, by = "DOLocationID")
+df_join <- df_join %>% drop_na()
+head(df_join)
+```
+
+```{r}
+# Plot data for Q3
+p_Borough <- ggplot(df_join, aes(x = Borough, y = DOLocationID_count, fill = factor(type))) + 
+  geom_bar(stat = "identity", position=position_dodge()) + 
+  coord_flip()
+p_Borough + facet_wrap(~factor(year), ncol = 2) +
+  ggtitle("Top Drop-off Location (Borough) by Year")
+```
+
+```{r}
+# Plot data for Q3
+p_Zone <- ggplot(df_join, aes(x = Zone, y = DOLocationID_count, fill = factor(type))) + 
+  geom_bar(stat = "identity", position=position_dodge()) + 
+  coord_flip()
+p_Zone + facet_wrap(~factor(year), ncol = 2) +
+  ggtitle("Top Drop-off Location (Zone) by Year")
+```
+
+```{r}
+# Analysis for Q1
+df_green <- df[which(df$type == "green"), ]
+head(df_green)
+max(df_green$mon_amount) - min(df_green$mon_amount)
+```
+
+
