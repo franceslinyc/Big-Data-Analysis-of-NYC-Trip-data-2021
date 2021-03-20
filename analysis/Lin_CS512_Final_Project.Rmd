@@ -7,13 +7,13 @@ output: pdf_document
 
 # Background and Objective
 
-My answer to the question "Where would you like to vist next?" is always Iceland. This is true even prior to COVID-19. While we are all stuck at home 24/7, I thought it might be nice to at least send my mind off to somewhere magical. However, after long hours search with minimal luck, I "settled" for this still quite interesting and fairly well-known, large (>100 GB) open dataset: NYC TLC trip record data. 
+My answer to the question "Where would you like to visit next?" is always Iceland. This is true even prior to COVID-19. While we are all stuck at home 24/7, I thought it might be nice to at least send my mind off to somewhere magical. However, after long hours search with minimal luck, I "settled" for this still quite interesting and fairly well-known, large (>100 GB) open dataset: NYC TLC trip record data. 
 
 The objective of this project is to answer the following questions of interest, which include 
 
 1. How does monthly average fare amount vary by year (2019 vs 2020) and by taxi type (yellow taxi vs green taxi)? 
 
-2. How does yearly total count of high volume fhv (for-hire vehicle) services vary by year (2019 vs 2020) and by license type (Uber, Lyft, Via, Juno)? 
+2. How does total count of high volume fhv (for-hire vehicle) services vary by year (2019 vs 2020) and by license type (Uber, Lyft, Via, Juno)? 
 
 3. What are the top 6 drop-off locations and how do they vary by year (2019 vs 2020) and by vehicle type (yellow taxi, green taxi, fhv, hfhv)? 
 
@@ -41,7 +41,7 @@ The taxi+ zone lookup record contains location information such as `Borough` (e.
 
 The yellow and green taxi trip records contain fields such as `VendorID` (`1=Creative Mobile Technologies, LLC` or `2=VeriFone Inc.`), `tpep_pickup_datetime`, `tpep_dropoff_datetime`, `PULocationID`, `DOLocationID`, `Trip_distance`, `Payment_type`, `Fare_amount`, `Tip_amount`, `Total_amount`, etc. The green taxi trip records has additional field `Trip_type` that is used to indicate whether it is `1=Stree-hail` or `2=Dispatch`.
 
-The fhv & hfhv trip records contain fields such as `Dispatching_base_num`, `Pickup_datetime`, `DropOff_datetime`, `PULocationID`, `DOLocationID`, and `SR_Flag` (`1=shared ride` or `null`). The hfhv trip records has additional field `Hvfhs_license_num` that is used to identify businesses: Juno, Uber, Via, and Lyft.
+The fhv and hfhv trip records contain fields such as `Dispatching_base_num`, `Pickup_datetime`, `DropOff_datetime`, `PULocationID`, `DOLocationID`, and `SR_Flag` (`1=shared ride` or `null`). The hfhv trip records has additional field `Hvfhs_license_num` that is used to identify businesses: Juno, Uber, Via, and Lyft.
 
 The taxi zone lookup record contains fields such as `LocationID`, `Borough`, `Zone`, and `service_zone`. `LocationID` can be used to identify `PULocationID` (i.e. pick-up location) and `DOLocationID` (i.e. drop-off location) in all other records. \ 
 
@@ -84,7 +84,7 @@ In retrospect, it makes more sense to do as follows: To load data to **BigQuery*
 
 Inside the bucket, I repeated the process and created separate folders so that trip records of **yellow taxi** (`yellow_data`: *72 objects, 63.8 GB*), **green taxi** (`green_data`: *72 files, 35.4 GB*), **fhv** (`fhv_data`: *72 files, 35.4 GB*) and **hfhv** (`hfhv_data`: *23 files, 22.3 GB*) were stored separately. 
 
-I had trouble previewing the entire dataset in **Dataprep** (I thought they did not load entirely,) so I repeated the above process. But this time, instead of separating records by type, I separated records further by year. The combined dataset (35.2662 GB) breaks down to: 
+I had trouble previewing the entire dataset in **Dataprep** (I thought they did not load entirely), so I repeated the above process. But this time, instead of separating records by type, I separated records further by year. The combined dataset (35.2662 GB) breaks down to: 
 
 record of 
 
@@ -134,16 +134,16 @@ buket details in Storage - Updated (~ 35.2662 GB):
 
 ## Overview of Data Wrangling
 
-I realize now that data wrangling can be an exceedingly long and still ongoing process. Overall, data were wrangled in **Dataprep**, **BigQuery**, and **R**, and the process continues in **Spark**. 
+I realize now that data wrangling can be an exceedingly long and still ongoing process. Overall, data were wrangled in **Dataprep**, **BigQuery** and **R**, and the process continues in **Spark**. 
 
 
 
 
 **To BigQuery**
 
-Once a dataset is created in **BigQuery**, using **Dataprep**, I attempted to transfer the data from **GCS** to **BigQuery**. The job for yellow taxi alone took more than 2 hours and still did not complete. Since it seemed that not all data were loaded to **Dataprep** successfully (they were!), as mentioned, I repeated all of the above process: I separated trip records not only by type (i.e. yellow, green taxi, fhv, hfhv) but also by year (i.e. 2015, 2016, and on) and reloaded them to **Storage**.
+Once a dataset is created in **BigQuery**, using **Dataprep**, I attempted to transfer the data from **GCS** to **BigQuery**. The job for yellow taxi records alone took more than 2 hours and still did not complete. Since it seemed that not all data were loaded to **Dataprep** successfully (they were!), as mentioned, I repeated all of the above process: I separated trip records not only by type (i.e. yellow, green taxi, fhv, hfhv) but also by year (i.e. 2015, 2016, and on) and reloaded them to **Storage**.
 
-It makes more sense to proceed with this route (by type & by years) as the final route, although it seems like the previous route (by type only) and then querying by `TIMESTAMP` is doable too. *(2015's dataset, for example, contains features such as* `longitude` *and* `latitude` *that were represented as Taxi Zone in 2019's and 2020's dataset, which further confirms that it may be best to also separate the records by year.)*
+It makes more sense to proceed with this route (by type & by years) as the final route, although it seems that the previous route (by type only) and then querying by `TIMESTAMP` is doable too. *(2015's dataset, for example, contains features such as* `longitude` *and* `latitude` *that were represented as Taxi Zone in 2019's and 2020's dataset, which further confirms that it may be best to also separate the records by year.)*
 
 
 
@@ -278,7 +278,7 @@ pprint.pprint(vals.first())
 </p>
 
 
-For now, I just wanted to show that the table loaded successfully as a **JSON** object. We will come back to **Spark** later in the **4. Model** section. 
+For now, I just want to show that the table loaded successfully as a **JSON** object. We will come back to **Spark** later in the **4. Model** section. 
 
 
 
@@ -303,13 +303,13 @@ Results in this section were mostly done through querying in **BigQuery** first.
 
 ## Data Analysis Questions 
 
-For the 3 data analysis questions, I am interested in: 
+For the data analysis questions, I am interested in: 
 
 ### Question 1: How does monthly average fare amount vary by year (2019 vs 2020) and by taxi type (yellow taxi vs green taxi)? 
 
-To answer this question, I used the `AVG` and `GROUP BY` function in **BigQuery** to compute average fare amount by month. Then, I downloaded query results for all records and loaded them in **R**. I further reformatted and combined the dataframes from there since the `ggplot` package of R requires table format to be in the long format (This can be done using the `tidyr` package too.) Then I made some scatterplots and overlaid smooth lines. \ 
+To answer this question, I used the `AVG` and `GROUP BY` function in **BigQuery** to compute average fare amount by month. Then, I downloaded query results for all records and loaded them in **R**. I further reformatted and combined the dataframes from there since the `ggplot` package of R requires table format to be in the long format (This can be done using the `tidyr` package too.) Then, I made some scatterplots and overlaid smooth lines. \ 
 
-Results show that while it appears that monthly average fare amount for yellow taxi shows a decreasing trend and that for green taxi shows an increasing one, the differences may not be significant (Max difference is \$$9.116099$, which occurs at green taxi trip records.) I am also unsure why there seems to an increase of monthly avg fare amount for 2020 green taxi but information could often be lost through aggregation. I also think that perhaps median could do a better job than mean does. Further wrangling and/or analysis could look into that. \ 
+Results show that while it appears that monthly average fare amount for yellow taxi shows a decreasing trend and that for green taxi shows an increasing one, the differences may not be significant (Max difference is \$$9.116099$, which occurs at green taxi trip records.) I am also unsure why there seems to an increase of monthly average fare amount for 2020 green taxi but information could often be lost through aggregation. I also think that perhaps median could do a better job than mean does. Further wrangling and/or analysis could look into that. \ 
 
 Figure 1. 
 <p>
@@ -333,11 +333,11 @@ ORDER BY pickup_mon ASC;
 
 
 
-### Question 2: How does yearly total count of high volume fhv (for-hire vehicle) services vary by year (2019 vs 2020) and by license type (Uber, Lyft, Via, Juno)? 
+### Question 2: How does total count of high volume fhv (for-hire vehicle) services vary by year (2019 vs 2020) and by license type (Uber, Lyft, Via, Juno)? 
 
 To answer this question, I followed similar steps: I counted yearly total count of dispatch by license type for high volume fhv. Recall that to be considered as hfhv, businesses either currently dispatch or plan to dispatch more than 10,000 fhv trips per day in NYC. Note also that Juno is no longer considered as hfhv as of 2020, but I included them in the resulting dataframe for plotting purposes. \ 
 
-Results show that Uber dispatched the most fhv trips overall and Lyft dispatched the second most trips from 2019-2020. And, not to my surprise is that while the number of trips for all businesses still remain high (>10,000 trips/day in NYC), it appears that all businesses have been affected during the the COVID-19 disruption. The number of trips are consistently lower and as mentioned, Juno is no longer considered as hfhv as of 2020. Further wrangling and/or analysis could look into exactly which month did the drop in trip occur. My guess is that it occured early 2020 when COVID-19 restrictions were in effect in NYC. \ 
+Results show that Uber dispatched the most fhv trips overall and Lyft dispatched the second most trips from 2019-2020. And, not to my surprise is that while the number of trips for all businesses still remain high (>10,000 trips/day in NYC), it appears that all businesses have been affected during the the COVID-19 disruption. The number of trips are consistently lower and as mentioned, Juno is no longer considered as hfhv as of 2020. Further wrangling and/or analysis could look into exactly which month did the drop in trip occur. My guess is that it occured in early 2020 when COVID-19 restrictions were in effect in NYC. \ 
 
 
 
@@ -366,9 +366,9 @@ ORDER BY count_license DESC;
 
 ### Question 3: What are the top 6 drop-off locations and how do they vary by year (2019 vs 2020) and by vehicle type (yellow taxi, green taxi, fhv, hfhv)? 
 
-To answer this question, I counted yearly total count of drop-off location ID,  ordered them and selected top 6 count of drop-off location ID in **BigQuery** for all vehicle types. Once I have query results for all vehicle types, I joined these tables along with the taxi+ zone lookup table using location ID as key and using the `full_join` function in the `dplyr` package of **R**. \ Then I plotted the count of top 6 drop-off location in term of `Borough` and `Zone` by year & by vehicle type.
+To answer this question, I counted yearly total count of drop-off location ID, ordered them and selected top 6 count of drop-off location ID in **BigQuery** for all vehicle types. Once I have query results for all vehicle types, I joined these tables along with the taxi+ zone lookup table and using the `full_join` function in the `dplyr` package of **R** and location ID as key. \ Then, I plotted the count of top 6 drop-off location in term of `Borough` and `Zone` by year & by vehicle type.
 
-Results show that while Manhattan is top drop-off location for yellow taxi and Queens, Brooklyn, and Queens are top drop-off locations for hfhv. There are a lot of unknown drop-off location for fhv (<10,000 trips/day in NYC). This is because in the taxi+ zone table `ID=264` corresponds to `Unknown Borough` and `NV Zone` and `ID=265` corresponds to `Unknown Borough` and `null Zone`. 
+Results show that Manhattan is top drop-off location for yellow taxi, and Queens, Brooklyn, and Manhattan are top drop-off locations for hfhv. There are a lot of unknown drop-off location for fhv (<10,000 trips/day in NYC). This is because in the taxi+ zone table `ID=264` corresponds to `Unknown Borough` and `NV Zone` and `ID=265` corresponds to `Unknown Borough` and `null Zone`. 
 
 Comparing the records across 2019 and 2020, we also see that similar trend as a result of COVID-19 disruption can be observed here. I get curious about specific zone of the drop-off location, so I also include a plot of top drop-off locations further broken down by zone, which is shown in Figure 4. 
 
@@ -419,11 +419,11 @@ To load and model data in **Spark**, I revisted Week 7's Spark and Week 8's Spar
 
 ### Bonus Question 1: How does monthly average fare amount vary for 2020 yellow taxi records? 
 
-I have to admit that spending 1-2 weeks on **Spark** prior to completing this project is NOT enough. Instead of going back to work on additional wrangling in **Data**, I decide to spend the remaining 2 days working in **Spark** to get additional practice for it, even if it means I will lose points for accuracy for this project. 
+I have to admit that spending 1-2 weeks on **Spark** prior to completing this project is NOT enough. Instead of going back to work on additional wrangling in **Dataprep**, I decide to spend the remaining 2 days working in **Spark** to get additional practice for it, even if it means I will lose points for accuracy for this project. 
 
-Average trip distance (in meter) and average fare amount (in $) were computed loading the table from **BigQuery** and converting it to a **PySpark** dataframe first. Then, I computed mean, standard deviation and count of average trip distance and average fare amount by month using the `mean`, `stddev` and `count` along with the `groupBy` and `agg` function from the **pyspark.sql** module.  
+Average trip distance (in meter) and average fare amount (in $) were computed loading the table from **BigQuery** and converting it to a **PySpark** dataframe first. Then, I computed mean, standard deviation and count of trip distance and fare amount by month using the `mean`, `stddev` and `count` along with the `groupBy` and `agg` function from the **pyspark.sql** module.  
 
-Results show that May has the longest mean trip distance (8.6103 m) and June has the highest mean fare amount ($18.7660). However, since the standard deviation is too high for both `trip_distance` and `total_amount` for some months, further wrangling should consider creating an IQR (interquartile range) function either using build-in or `map(lambda x: )` function to identify outliers and further filter put the outliers. 
+Results show that May has the longest mean trip distance (8.6103 m) and June has the highest mean fare amount ($18.7660). However, since the standard deviation is considerably high for both `trip_distance` and `total_amount` for several months, further wrangling should consider creating an IQR (interquartile range) function (e.g. `map(lambda x: )`) or using a build-in function to identify outliers and further filter them out. 
 
 ```{}
 +----------+------------------+--------------------------+--------------------+
@@ -468,7 +468,7 @@ Results show that May has the longest mean trip distance (8.6103 m) and June has
 
 ### Bonus Question 2: What is the yearly average fare amount and avg distance for 2020 yellow taxi records? 
 
-It has become very clear that we will either have to do further wrangling here in **PySpark** and **Dataproc** or go back to **Dataprep** for it since ensuring these values are non-negative in **Dataprep** is not enough. The output is shown as follows. 
+It has become very clear that we will either have to do further wrangling here in **Dataproc** for **PySpark** or go back to **Dataprep** for it since ensuring these values are non-negative in **Dataprep** is not enough. The output is shown as follows:  
 
 ```{}
 +-------+------------------+
@@ -503,7 +503,7 @@ Results can be found in the **3. Explore** section, but to sum up, it appeared t
 
 Results are not error free, but I am okay with what I have at this point. After all, the purpose of EDA (e.g. plot, summary statistics) is to ensure that the values are accurate and questions are not only interesting but also potentially statistically significant prior to doing any modeling, which I unfortunately ran out of time for. The following is what I will do in **Spark** next if time permits: 
 
-1. Create the IQR function to identify outliers 
+1. Create an IQR function to identify outliers 
 
 2. Remove the outliers
 
